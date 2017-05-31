@@ -2,6 +2,10 @@
 #
 # Original implementation: Written in 2014 by Sebastiano Vigna (vigna@acm.org)
 
+# xorshift1024+
+#       -  result:      64-bit unsigned int
+#       -  period:      2^1024-1
+#       -  state type:  1025 bytes
 class Random::Xorshift1024star
   include Random
 
