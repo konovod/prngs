@@ -46,10 +46,10 @@ class Random::ChaCha20
 
   def new_seed
     # get bytes from SecureRandom and convert to UInt32 slice
-    key = SecureRandom.random_bytes(4 * 9).to_unsafe.as(Pointer(UInt32)).to_slice(9)
+    key = SecureRandom.random_bytes(4 * 10).to_unsafe.as(Pointer(UInt32)).to_slice(10)
     new_seed(StaticArray(UInt32, 8).new do |i|
       key[i]
-    end, key[8])
+    end, UInt64.new(key[8]) << 32 + key[9])
   end
 
   private def init_buffer(key : StaticArray(UInt32, 8))
