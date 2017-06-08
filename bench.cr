@@ -10,6 +10,7 @@ gens = {
   Random::Xoroshiro128plus.new,
   Random::PCG32.new,
   Random::WELL512.new,
+  Random::ChaCha20.new,
 }
 
 x = 0.0 # to ensure that optimizations won't remove rand calls
@@ -18,6 +19,6 @@ Benchmark.ips do |bench|
   gens.each do |gen|
     bench.report(gen.class.to_s) { x += gen.rand }
   end
-  bench.report("SecureRandom") {SecureRandom.random_bytes(bytes)}
+  bench.report("SecureRandom") { SecureRandom.random_bytes(bytes) }
 end
 p x
