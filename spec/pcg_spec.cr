@@ -212,4 +212,23 @@ describe "Random::PCG32" do
       m.next_u.should eq(n)
     end
   end
+
+  it "can jump ahead" do
+    seed = {123_u64, 456_u64}
+
+    m1 = Random::PCG32.new(*seed)
+    m2 = Random::PCG32.new(*seed)
+    10.times { m1.next_u }
+    m2.jump(10)
+    m1.next_u.should eq m2.next_u
+  end
+  it "can jump back" do
+    seed = {123_u64, 456_u64}
+
+    m1 = Random::PCG32.new(*seed)
+    m2 = Random::PCG32.new(*seed)
+    10.times { m1.next_u }
+    m1.jump(-10)
+    m1.next_u.should eq m2.next_u
+  end
 end

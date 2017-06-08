@@ -34,6 +34,8 @@
 class Random::PCG32
   include Random
 
+  PCG_DEFAULT_MULTIPLIER_64 = 6364136223846793005_u64
+
   @state : UInt64
   @inc : UInt64
 
@@ -54,9 +56,27 @@ class Random::PCG32
 
   def next_u
     oldstate = @state
-    @state = oldstate * 6364136223846793005_u64 + @inc
+    @state = oldstate * PCG_DEFAULT_MULTIPLIER_64 + @inc
     xorshifted = UInt32.new(((oldstate >> 18) ^ oldstate) >> 27)
     rot = UInt32.new(oldstate >> 59)
     return UInt32.new((xorshifted >> rot) | (xorshifted << ((~rot + 1) & 31)))
+  end
+
+  def jump(delta)
+    deltau64 = UInt64.new(delta)
+    acc_mult = 1u64
+    acc_plus = 0u64
+    cur_plus = @inc
+    cur_mult = PCG_DEFAULT_MULTIPLIER_64
+    while (deltau64 > 0)
+      if deltau64 & 1 > 0
+        acc_mult *= cur_mult
+        acc_plus = acc_plus * cur_mult + cur_plus
+      end
+      cur_plus = (cur_mult + 1) * cur_plus
+      cur_mult *= cur_mult
+      deltau64 /= 2
+    end
+    @state = acc_mult * @state + acc_plus
   end
 end
