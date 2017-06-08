@@ -13,9 +13,10 @@ Benchmark results on my laptop:
 [andrew@lenovo prngs]$ crystal -v
 Crystal 0.22.0 (2017-04-22) LLVM 4.0.0
 [andrew@lenovo prngs]$ crystal run bench.cr --release
-         Random::MT19937  28.05M ( 35.65ns) (± 2.21%)  7.63× slower
-           Random::ISAAC  39.69M ( 25.19ns) (± 2.72%)  5.39× slower
-Random::XorShift1024Star  94.46M ( 10.59ns) (± 3.99%)  2.26× slower
-Random::Xoroshiro128plus  213.9M (  4.67ns) (± 4.99%)       fastest
-           Random::PCG32 181.28M (  5.52ns) (± 4.66%)  1.18× slower
+         Random::MT19937  22.31M ( 44.83ns) (± 4.18%)  3.76× slower
+           Random::ISAAC  33.05M ( 30.26ns) (± 5.11%)  2.54× slower
+Random::Xorshift1024star  64.84M ( 15.42ns) (± 5.84%)  1.29× slower
+Random::Xoroshiro128plus  83.87M ( 11.92ns) (± 4.84%)       fastest
+           Random::PCG32   70.6M ( 14.16ns) (± 7.43%)  1.19× slower
+         Random::WELL512  31.87M ( 31.38ns) (± 4.79%)  2.63× slower
 ```
