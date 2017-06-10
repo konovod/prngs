@@ -1,4 +1,3 @@
-require "random/isaac"
 require "secure_random"
 require "benchmark"
 require "./src/prngs"
