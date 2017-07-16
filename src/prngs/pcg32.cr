@@ -1,6 +1,4 @@
-# This is a Crystal conversion of basic C PCG implementation,
-# without additional features included in C++ implementation
-# Written by me, Andrey Konovod
+# This is a Crystal conversion of basic C PCG implementation
 #
 #  Original file notice:
 #

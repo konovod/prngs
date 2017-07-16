@@ -1,3 +1,4 @@
+require "random"
 require "secure_random"
 require "benchmark"
 require "./src/prngs"
@@ -10,6 +11,7 @@ gens = {
   Random::PCG32.new,
   Random::WELL512.new,
   Random::ChaCha20.new,
+  Random::ChaCha12.new,
 }
 
 x = 0.0 # to ensure that optimizations won't remove rand calls

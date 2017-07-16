@@ -1,5 +1,5 @@
 require "spec"
-require "../src/prngs/pcg"
+require "random/pcg32"
 
 describe "Random::PCG32" do
   it "generates random numbers as generated official implementation" do
