@@ -8,7 +8,7 @@ gens = {
   Random::ISAAC.new,
   Random::Xorshift1024star.new,
   Random::Xoroshiro128plus.new,
-  Random::PCG32.new,
+  Random::ShardPCG32.new,
   Random::WELL512.new,
   Random::ChaCha20.new,
   Random::ChaCha12.new,

@@ -29,7 +29,7 @@
 #       -  period:      2^64   (* 2^63 streams)
 #       -  state type:  pcg32_random_t (16 bytes)
 #       -  output func: XSH-RR
-class Random::PCG32
+class Random::ShardPCG32
   include Random
 
   PCG_DEFAULT_MULTIPLIER_64 = 6364136223846793005_u64
@@ -52,12 +52,17 @@ class Random::PCG32
     next_u
   end
 
+  @[AlwaysInline]
+  private def rotr32(x : UInt32, k)
+    (x >> k) | (x << (32 - k))
+  end
+
   def next_u
     oldstate = @state
     @state = oldstate * PCG_DEFAULT_MULTIPLIER_64 + @inc
     xorshifted = UInt32.new(((oldstate >> 18) ^ oldstate) >> 27)
-    rot = UInt32.new(oldstate >> 59)
-    return UInt32.new((xorshifted >> rot) | (xorshifted << ((~rot + 1) & 31)))
+    rot = Int32.new(oldstate >> 59)
+    return UInt32.new(rotr32(xorshifted, rot))
   end
 
   def jump(delta)

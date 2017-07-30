@@ -1,5 +1,5 @@
 require "spec"
-require "random/pcg32"
+require "../src/prngs/pcg32"
 
 describe "Random::PCG32" do
   it "generates random numbers as generated official implementation" do
@@ -207,7 +207,7 @@ describe "Random::PCG32" do
     ]
     seed = {123_u64, 456_u64}
 
-    m = Random::PCG32.new(*seed)
+    m = Random::ShardPCG32.new(*seed)
     numbers.each do |n|
       m.next_u.should eq(n)
     end
@@ -216,8 +216,8 @@ describe "Random::PCG32" do
   it "can jump ahead" do
     seed = {123_u64, 456_u64}
 
-    m1 = Random::PCG32.new(*seed)
-    m2 = Random::PCG32.new(*seed)
+    m1 = Random::ShardPCG32.new(*seed)
+    m2 = Random::ShardPCG32.new(*seed)
     10.times { m1.next_u }
     m2.jump(10)
     m1.next_u.should eq m2.next_u
@@ -225,8 +225,8 @@ describe "Random::PCG32" do
   it "can jump back" do
     seed = {123_u64, 456_u64}
 
-    m1 = Random::PCG32.new(*seed)
-    m2 = Random::PCG32.new(*seed)
+    m1 = Random::ShardPCG32.new(*seed)
+    m2 = Random::ShardPCG32.new(*seed)
     10.times { m1.next_u }
     m1.jump(-10)
     m1.next_u.should eq m2.next_u
