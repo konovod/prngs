@@ -1,11 +1,11 @@
 require "secure_random"
 
-# Crystal implementation of ChaCha20 PRNG.
+# Crystal implementation of ChaCha12/20 PRNG.
 # Algorithm is considered cryptographically secure, but is relatively slow and
 # (as any user-space algorithm) is prone to side-channel attacks -
 # so must not be used as a SecureRandom replacement, only as a Random,
 # just not predictable by it's output
-class Random::ChaCha20
+class Random::ChaCha(Rounds)
   include Random
 
   BUF_SIZE = 16
@@ -24,7 +24,7 @@ class Random::ChaCha20
     @nonce = nonce
     @stream_id = 0_u64
     init_buffer(key)
-    chacha20
+    chacha
     @pool_index = 0
   end
 
@@ -62,33 +62,33 @@ class Random::ChaCha20
     8.times do |i|
       @decrypted[i + 4] = key[i]
     end
-    # the rest is counter that will be filled in chacha20
+    # the rest is counter that will be filled in chacha
   end
 
   def next_u
     result = @encrypted[@pool_index]
     if (@pool_index += 1) >= BUF_SIZE
       @counter += 1
-      chacha20
+      chacha
       @pool_index = 0
     end
     result
   end
 
   @[AlwaysInline]
-  private def rotl32(x : UInt32, k)
+  private def rotl(x : UInt32, k)
     (x << k) | (x >> (32 - k))
   end
 
   @[AlwaysInline]
   private def quarterround(a, b, c, d)
-    @encrypted[a] += @encrypted[b]; @encrypted[d] ^= @encrypted[a]; @encrypted[d] = rotl32(@encrypted[d], 16)
-    @encrypted[c] += @encrypted[d]; @encrypted[b] ^= @encrypted[c]; @encrypted[b] = rotl32(@encrypted[b], 12)
-    @encrypted[a] += @encrypted[b]; @encrypted[d] ^= @encrypted[a]; @encrypted[d] = rotl32(@encrypted[d], 8)
-    @encrypted[c] += @encrypted[d]; @encrypted[b] ^= @encrypted[c]; @encrypted[b] = rotl32(@encrypted[b], 7)
+    @encrypted[a] += @encrypted[b]; @encrypted[d] ^= @encrypted[a]; @encrypted[d] = rotl(@encrypted[d], 16)
+    @encrypted[c] += @encrypted[d]; @encrypted[b] ^= @encrypted[c]; @encrypted[b] = rotl(@encrypted[b], 12)
+    @encrypted[a] += @encrypted[b]; @encrypted[d] ^= @encrypted[a]; @encrypted[d] = rotl(@encrypted[d], 8)
+    @encrypted[c] += @encrypted[d]; @encrypted[b] ^= @encrypted[c]; @encrypted[b] = rotl(@encrypted[b], 7)
   end
 
-  private def chacha20
+  private def chacha
     # init buffer
     @decrypted[12] = (@nonce >> 32).to_u32
     @decrypted[13] = (@nonce >> 0).to_u32
@@ -96,8 +96,8 @@ class Random::ChaCha20
     @decrypted[15] = (@counter >> 0).to_u32
 
     @encrypted = @decrypted
-    # 20 rounds, 2 rounds per loop.
-    10.times do
+    # Rounds rounds, 2 rounds per loop.
+    (Rounds/2).times do
       quarterround(0, 4, 8, 12)  # column 0
       quarterround(1, 5, 9, 13)  # column 1
       quarterround(2, 6, 10, 14) # column 2
@@ -128,8 +128,13 @@ class Random::ChaCha20
     end
     if full != 0
       @counter += full
-      chacha20
+      chacha
     end
     @pool_index = new_pool_index
   end
+end
+
+module Random
+  alias ChaCha12 = ChaCha(12)
+  alias ChaCha20 = ChaCha(20)
 end
