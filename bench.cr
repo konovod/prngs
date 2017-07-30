@@ -6,6 +6,7 @@ require "./src/prngs"
 gens = {
   Random::MT19937.new,
   Random::ISAAC.new,
+  Random::ISAACPlus.new,
   Random::Xorshift1024star.new,
   Random::Xoroshiro128plus.new,
   Random::ShardPCG32.new,
