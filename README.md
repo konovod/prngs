@@ -1,6 +1,6 @@
 # prngs
 
-Crystal implementations of PCG32, XorShift1024* and Xoroshiro128+, WELL512, ChaCha20 pseudorandom generators.
+Crystal implementations of PCG32, XorShift1024* and Xoroshiro128+, WELL512, ChaCha12, ChaCha20, ISAAC+ pseudorandom generators.
 
 See http://www.pcg-random.org for more details about PCG
 
@@ -8,32 +8,35 @@ See http://xoroshiro.di.unimi.it for more details about xorshift family
 
 # Usage
    This shard provides additional implementations of `Random` module, so usage is identical to usage of `Random` in stdlib.
-   Also, PCG32 and ChaCha20 implements `jump` method that allows to instantly travel along generated sequence forward and backward. See examples in `spec`
+   Also, PCG32 and ChaCha12/20 implements `jump` method that allows to instantly travel along generated sequence forward and backward. See examples in `spec`
 # Speed
 Benchmark results on my laptop:
 ```
 [andrew@lenovo prngs]$ crystal -v
-Crystal 0.23.0 (2017-07-13) LLVM 4.0.1
+Crystal 0.23.1 (2017-07-17) LLVM 4.0.1
 [andrew@lenovo prngs]$ crystal bench.cr
 Warning: benchmarking without the `--release` flag won't yield useful results
-         Random::MT19937   2.08M (479.71ns) (± 3.60%)  2.88× slower
-           Random::ISAAC   1.84M (543.39ns) (± 2.84%)  3.26× slower
-Random::Xorshift1024star    6.0M (166.73ns) (± 2.34%)       fastest
-Random::Xoroshiro128plus   5.65M (176.99ns) (± 2.92%)  1.06× slower
-           Random::PCG32   5.27M (189.58ns) (± 2.54%)  1.14× slower
-         Random::WELL512   2.17M (460.33ns) (± 0.99%)  2.76× slower
-        Random::ChaCha20  138.3k (  7.23µs) (± 0.41%) 43.37× slower
-        Random::ChaCha12 224.08k (  4.46µs) (± 0.36%) 26.76× slower
-            SecureRandom   1.73M (579.42ns) (± 1.20%)  3.48× slower
-61292302.781848624
+         Random::MT19937   2.08M (479.94ns) (± 1.07%)  2.83× slower
+           Random::ISAAC   1.88M (532.21ns) (± 2.59%)  3.14× slower
+       Random::ISAACPlus   1.84M (543.98ns) (± 1.85%)  3.20× slower
+Random::Xorshift1024star   5.89M (169.76ns) (± 2.22%)       fastest
+Random::Xoroshiro128plus   5.69M ( 175.7ns) (± 2.41%)  1.03× slower
+      Random::ShardPCG32   5.04M (198.51ns) (± 2.43%)  1.17× slower
+         Random::WELL512   2.15M (464.87ns) (± 2.58%)  2.74× slower
+      Random::ChaCha(20) 137.62k (  7.27µs) (± 1.15%) 42.80× slower
+      Random::ChaCha(12) 225.96k (  4.43µs) (± 0.64%) 26.07× slower
+            SecureRandom   1.77M (566.23ns) (± 1.27%)  3.34× slower
+65554439.77777062
 [andrew@lenovo prngs]$ crystal bench.cr --release
-         Random::MT19937  22.22M (  45.0ns) (± 4.35%)  4.06× slower
-           Random::ISAAC  34.76M ( 28.77ns) (± 4.69%)  2.60× slower
-Random::Xorshift1024star  70.07M ( 14.27ns) (± 7.06%)  1.29× slower
-Random::Xoroshiro128plus  90.27M ( 11.08ns) (± 4.66%)       fastest
-           Random::PCG32  68.55M ( 14.59ns) (± 7.08%)  1.32× slower
-         Random::WELL512  22.55M ( 44.34ns) (± 2.00%)  4.00× slower
-        Random::ChaCha20  22.19M ( 45.07ns) (± 4.31%)  4.07× slower
-        Random::ChaCha12  29.24M (  34.2ns) (± 4.72%)  3.09× slower
-            SecureRandom   2.01M (498.15ns) (± 1.42%) 44.97× slower
+         Random::MT19937  21.99M ( 45.47ns) (± 4.23%)  4.12× slower
+           Random::ISAAC  35.42M ( 28.24ns) (± 6.12%)  2.56× slower
+       Random::ISAACPlus  34.13M (  29.3ns) (± 6.96%)  2.65× slower
+Random::Xorshift1024star  70.57M ( 14.17ns) (± 6.36%)  1.28× slower
+Random::Xoroshiro128plus  90.55M ( 11.04ns) (± 4.40%)       fastest
+      Random::ShardPCG32  64.03M ( 15.62ns) (± 6.25%)  1.41× slower
+         Random::WELL512  22.76M ( 43.94ns) (± 2.04%)  3.98× slower
+      Random::ChaCha(20)   22.1M ( 45.24ns) (± 4.17%)  4.10× slower
+      Random::ChaCha(12)  28.69M ( 34.85ns) (± 4.22%)  3.16× slower
+            SecureRandom   2.01M (497.42ns) (± 1.41%) 45.04× slower
+973336292.1701912
 ```
